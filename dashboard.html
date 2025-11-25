@@ -2,856 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Library Reading Challenge</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-      border-bottom: 1px solid #ccc;
-    }
-
-    .profile {
-      position: relative;
-      width: 40px;
-      height: 40px;
-      background-color: #007bff;
-      color: white;
-      font-weight: bold;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-
-    .dropdown {
-      display: none;
-      position: absolute;
-      top: 50px;
-      right: 0;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    .dropdown button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      text-align: left;
-    }
-
-    .dropdown button:hover {
-      background-color: #f0f0f0;
-    }
-
-    .section {
-      margin: 20px 0;
-      background: #fff;
-      border-radius: 6px;
-      padding: 20px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Leaderboard */
-    .leaderboard-bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .leaderboard-profile {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: #007bff;
-      color: #fff;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-    }
-
-    .leaderboard-label {
-      font-weight: 600;
-      margin-left: 10px;
-    }
-
-    /* Progress Bar */
-    .progress-container {
-      position: relative;
-      height: 30px;
-      background-color: #e0e0e0;
-      border-radius: 15px;
-      overflow: visible;
-      margin-top: 15px;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #007bff, #00bfff);
-      width: 0%;
-      transition: width 0.5s ease;
-      border-radius: 15px 0 0 15px;
-    }
-
-    .milestone {
-      position: absolute;
-      top: -8px;
-      width: 2px;
-      height: 46px;
-      background: #555;
-      z-index: 2;
-    }
-
-    .milestone-label {
-      position: absolute;
-      bottom: 100%;
-      margin-bottom: 8px;
-      font-size: clamp(9px, 1.2vw, 11px);
-      transform: translateX(-50%);
-      color: #333;
-      font-weight: 500;
-      white-space: nowrap;
-      z-index: 3;
-    }
-
-    .progress-text {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    /* Inputs + Buttons */
-    input, button {
-      margin-right: 10px;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .submit-minutes {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-    }
-
-    .submit-minutes:hover {
-      background-color: #218838;
-    }
-    #bingoBoard {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  max-width: 90vw;       /* fills screen on mobile */
-  width: 60%;            /* 60% on larger screens */
-  margin: 0 auto;        /* center horizontally */
-}
-
-#bingoBoard div {
-  padding-top: 100%;     /* makes square aspect ratio */
-  position: relative;
-  border: 2px solid #555;
-  border-radius: 10px;
-  background-color: #f0f0f0;
-  text-align: center;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
-
-#bingoBoard div.completed {
-  background-color: #28a745;
-  color: white;
-}
-
-#bingoBoard div span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 5px;
-}
-
-/* Confetti container */
-#confettiCanvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-  </style>
+  
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
   <header>
-    <h1>Library Reading Challenge</h1>
-    <div id="profileIcon" class="profile">
-      <span id="profileInitial">U</span>
-      <div id="profileDropdown" class="dropdown">
-        <button id="logoutBtn">Logout</button>
+    <div class="header-content">
+      <h1>📚 Reading Challenge</h1>
+      <div id="profileIcon" class="profile">
+        <span id="profileInitial">U</span>
+        <div id="profileDropdown" class="dropdown">
+          <button id="logoutBtn">Logout 🚪</button>
+        </div>
       </div>
     </div>
   </header>
 
-  <main>
-    <section id="welcomeSection" class="section">
+  <main class="dashboard-grid">
+    
+    <section id="welcomeSection" class="card welcome-card">
       <h2 id="welcomeMessage">Welcome back!</h2>
+      <div class="streak-box">
+        <h3>🔥 Streak</h3>
+        <p id="readingStreakDisplay">Loading...</p>
+        <p id="dailyHighScoreDisplay" class="sub-text">Loading...</p>
+      </div>
     </section>
 
-    <section id="readingStreakSection" class="section">
-      <h3>Your Reading Streak</h3>
-      <p id="readingStreakDisplay">Loading...</p>
-      <p id="dailyHighScoreDisplay">Loading...</p>
-    </section>
-
-
-    <section id="leaderboardSection" class="section">
-      <h3>Top 10 Leaderboard</h3>
-      <div id="leaderboardContainer"></div>
-    </section>
-
-    <section id="communitySection" class="section">
-      <h3>Community Progress</h3>
+    <section id="communitySection" class="card full-width">
+      <h3>🌍 Community Goal</h3>
       <div id="communityProgressBar" class="progress-container">
         <div id="progressFill" class="progress-bar"></div>
       </div>
-      <div id="progressText" class="progress-text"></div>
+      <div id="progressText" class="progress-text">Loading...</div>
     </section>
 
-    <section id="userMinutesSection" class="section">
-      <h3>Your Logged Minutes</h3>
-      <p id="userMinutes">0 minutes</p>
+    <section id="logMinutesSection" class="card action-card">
+      <h3>⏱️ Log Your Time</h3>
+      <div class="input-group">
+        <input id="bookTitleInput" type="text" placeholder="📖 What book are you reading?" />
+        <input id="minutesInput" type="number" placeholder="Minutes" min="1" max="120" />
+      </div>
+      
+      <div class="button-group">
+        <button id="logMinutesBtn" class="btn btn-primary">Save Minutes</button>
+      </div>
+      <p id="logMessage" class="error-msg"></p>
+
+      <div class="stopwatch-area">
+        <p id="stopwatchDisplay" class="digital-clock">00:00</p>
+        <button id="stopwatchBtn" class="btn btn-secondary">Start Timer</button>
+      </div>
     </section>
 
-    <section id="logMinutesSection" class="section">
-      <h3>Log Reading Time</h3>
-      <input id="bookTitleInput" type="text" placeholder="Book Title" />
-      <input id="minutesInput" type="number" placeholder="Minutes" min="1" max="120" />
-      <button id="logMinutesBtn" class="submit-minutes">Log Minutes</button>
-      <p id="logMessage" style="color:red;"></p>
-
-      <p id="stopwatchDisplay" style="font-weight:bold;">⏱ 00:00</p>
-      <button id="stopwatchBtn" style="background:#007bff;color:white;border:none;padding:8px 12px;border-radius:4px;">
-        Start Stopwatch
-      </button>
+    <section id="userMinutesSection" class="card stat-card">
+      <h3>Your Total</h3>
+      <div class="big-number" id="userMinutes">0</div>
+      <p>minutes read</p>
     </section>
 
-    <section id="bingoSection" class="section">
+    <section id="leaderboardSection" class="card leaderboard-card">
+      <h3>🏆 Top Readers</h3>
+      <div id="leaderboardContainer" class="leaderboard-list"></div>
+    </section>
 
-  <h3>Summer Reading Bingo</h3>
-  <p>Get 5 in a row to get bingo or fill the page!</p>
-
-  <div id="bingoBoard"></div>
-</section>
-<canvas id="confettiCanvas"></canvas>
-
+    <section id="bingoSection" class="card full-width bingo-card">
+      <h3>☀️ Summer Reading Bingo</h3>
+      <p>Tap a square to see the challenge details.</p>
+      <div id="bingoBoard"></div>
+    </section>
 
   </main>
 
-  <script>
-  /* ========= CONFIG ========= */
-  const SUPABASE_URL = 'https://hfugnpqguidgosxyuioj.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdWducHFndWlkZ29zeHl1aW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NjE3ODAsImV4cCI6MjA3ODAzNzc4MH0.eawP-KaZTXOAE_OSYeJR6Ds_c6aKsqOsXo_EGifgtrU';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const COMMUNITY_GOAL = 2_000_000;
-  let currentUser = null;
-  let stopwatchInterval = null;
-  let startTime = null;
-  let STREAK_INTERVAL_SECONDS = 24 * 60 * 60;
-
-  /* ========= UTILS ========= */
-  function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  }
-
-  /* ========= SUPABASE HELPERS (UPDATED FOR UUID) ========= */
-
-  /* NEW — fetch userdetails by UUID instead of username */
-  async function getUserDataById(uuid) {
-    const { data, error } = await supabase
-      .from('Userdetails')
-      .select('*')
-      .eq('id', uuid)
-      .single();
-    if (error) throw error;
-    return data;
-  }
-
-  /* UPDATED — get logs filtered by user_id instead of username */
-  async function getUserLogsById(userId) {
-    const { data, error } = await supabase
-      .from('loghistory')
-      .select('minutes_logged, time_logged')
-      .eq('user_id', userId)
-      .order("time_logged", { ascending: false });
-
-    if (error) throw error;
-    return data;
-  }
-
-  async function getAllUsers() {
-    const { data, error } = await supabase.from('Userdetails').select('user_name, minutes_logged');
-    if (error) throw error;
-    return data;
-  }
-
-  async function getAllLogs() {
-    const { data, error } = await supabase.from('loghistory').select('minutes_logged');
-    if (error) throw error;
-    return data;
-  }
-
-  /* UPDATED — logMinutes now stores user_id */
-  async function logReadingMinutes(user, minutes, bookTitle) {
-    const { error } = await supabase.from('loghistory').insert([{
-      user_id: user.id,               // NEW
-      minutes_logged: minutes,
-      book_title: bookTitle,
-      time_logged: new Date().toISOString()
-    }]);
-    loadDashboard();
-    if (error) throw error;
-  }
-
-  /* ========= RENDER FUNCTIONS ========= */
-  function renderWelcome(user) {
-    document.getElementById('profileInitial').textContent = user.user_name[0].toUpperCase();
-    document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.user_name}!`;
-  }
-
-  function renderUserMinutes(total) {
-    document.getElementById('userMinutes').textContent = `${total.toLocaleString()} minutes`;
-  }
-
-  function renderLeaderboard(users) {
-    const container = document.getElementById('leaderboardContainer');
-    container.innerHTML = '';
-    if (!users.length) return (container.textContent = 'No leaderboard data available.');
-
-    users
-      .sort((a, b) => b.minutes_logged - a.minutes_logged)
-      .slice(0, 10)
-      .forEach(user => {
-        const bar = document.createElement('div');
-        bar.classList.add('leaderboard-bar');
-        bar.innerHTML = `
-          <div class="leaderboard-profile">${user.user_name[0].toUpperCase()}</div>
-          <div style="background:#007bff;width:${Math.min(user.minutes_logged / 10,300)}px;height:30px;border-radius:4px;"></div>
-          <div class="leaderboard-label">${user.user_name}: ${user.minutes_logged} min</div>
-        `;
-        container.appendChild(bar);
-      });
-  }
-
-  function renderProgressBar(total) {
-    const fill = document.getElementById('progressFill');
-    const text = document.getElementById('progressText');
-    const container = document.getElementById('communityProgressBar');
-    const percent = Math.min((total / COMMUNITY_GOAL) * 100, 100);
-    fill.style.width = `${percent}%`;
-    text.textContent = `Community has logged ${total.toLocaleString()} of ${COMMUNITY_GOAL.toLocaleString()} minutes (${percent.toFixed(2)}%)`;
-
-    container.querySelectorAll('.milestone, .milestone-label').forEach(el => el.remove());
-    const milestones = [10000, 50000, 100000];
-    for (let i = 200000; i <= COMMUNITY_GOAL; i += 100000) milestones.push(i);
-
-    milestones.forEach(ms => {
-      const pos = (ms / COMMUNITY_GOAL) * container.offsetWidth;
-      const line = document.createElement('div');
-      line.className = 'milestone';
-      line.style.left = `${pos}px`;
-
-      const label = document.createElement('div');
-      label.className = 'milestone-label';
-      label.textContent = ms >= 1_000_000 ? (ms / 1_000_000).toFixed(1) + 'M' : (ms >= 1000 ? (ms / 1000) + 'k' : ms);
-      label.style.left = `${pos}px`;
-
-      container.append(line, label);
-    });
-  }
-
-  /* ========= BINGO AUTO-FIT ========= */
-  function autoFitText(el) {
-    const parent = el.parentElement;
-
-    let min = 1;
-    let max = 40;
-    let size = max;
-
-    function fits(fontSize) {
-      el.style.fontSize = fontSize + "px";
-      return (
-        el.scrollWidth <= parent.clientWidth * 0.90 &&
-        el.scrollHeight <= parent.clientHeight * 0.90
-      );
-    }
-
-    while (min <= max) {
-      let mid = Math.floor((min + max) / 2);
-      if (fits(mid)) {
-        size = mid;
-        min = mid + 1;
-      } else {
-        max = mid - 1;
-      }
-    }
-
-    el.style.fontSize = size + "px";
-  }
-
-  function autoFitAllBingoText() {
-    const spans = document.querySelectorAll("#bingoBoard div span");
-    spans.forEach(span => autoFitText(span));
-  }
-
-  /* ========= READING STREAK (unchanged except logs fetch) ========= */
-  async function loadReadingStreak() {
-    if (!currentUser) return;
-
-    const logs = await getUserLogsById(currentUser.id);
-
-    const streakEl = document.getElementById("readingStreakDisplay");
-    const highScoreEl = document.getElementById("dailyHighScoreDisplay");
-
-    if (!logs || logs.length === 0) {
-      streakEl.textContent = "Reading Streak: 0 days";
-      highScoreEl.textContent = "Daily High Score: 0 minutes";
-      return;
-    }
-
-    let dayTotals = {};
-    logs.forEach(l => {
-      const day = new Date(l.time_logged).toISOString().slice(0, 10);
-      dayTotals[day] = (dayTotals[day] || 0) + l.minutes_logged;
-    });
-
-    highScoreEl.textContent =
-      "Daily High Score: " + Math.max(...Object.values(dayTotals)) + " minutes";
-
-    const days = Object.keys(dayTotals).sort().reverse();
-
-    const today = new Date();
-    const latestDay = new Date(days[0]);
-    const THIRTY_TWO_HOURS = 32 * 60 * 60 * 1000;
-
-    if (today - latestDay > THIRTY_TWO_HOURS) {
-      streakEl.textContent = "Reading Streak: 0 days";
-      await supabase
-        .from("Userdetails")
-        .update({ reading_streak: 0 })
-        .eq("id", currentUser.id);
-      return;
-    }
-
-    let streak = 1;
-
-    const daysBetween = (a, b) => {
-      const d1 = new Date(a);
-      const d2 = new Date(b);
-      return Math.round(
-        (d1 - d2) / (24 * 60 * 60 * 1000)
-      );
-    };
-
-    for (let i = 1; i < days.length; i++) {
-      if (daysBetween(days[i - 1], days[i]) === 1) streak++;
-      else break;
-    }
-
-    streakEl.textContent = `Reading Streak: ${streak} day(s)`;
-
-    await supabase
-      .from("Userdetails")
-      .update({ reading_streak: streak })
-      .eq("id", currentUser.id);
-  }
-
-  /* ========= DASHBOARD LOADER (MAIN FIX HERE) ========= */
-  async function loadDashboard() {
-
-    /* ✔ NEW — check Supabase auth user, NOT sessionStorage */
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return (window.location.href = 'login.html');
-
-    /* ✔ NEW — load userdetails by UUID */
-    currentUser = await getUserDataById(user.id);
-
-    if (!currentUser) {
-      console.error("No matching userdetails row found for UUID:", user.id);
-      return (window.location.href = 'login.html');
-    }
-
-    renderWelcome(currentUser);
-
-    /* ✔ UPDATED — get logs by user_id */
-    const userLogs = await getUserLogsById(currentUser.id);
-    const totalUserMinutes = userLogs.reduce((s, e) => s + e.minutes_logged, 0);
-    renderUserMinutes(totalUserMinutes);
-
-    await supabase
-      .from('Userdetails')
-      .update({ minutes_logged: totalUserMinutes })
-      .eq('id', currentUser.id);
-
-    const allUsers = await getAllUsers();
-    renderLeaderboard(allUsers);
-
-    const allLogs = await getAllLogs();
-    const totalCommunityMinutes = allLogs.reduce((s, e) => s + e.minutes_logged, 0);
-    renderProgressBar(totalCommunityMinutes);
-
-    await loadBingo();
-    await loadReadingStreak();
-  }
-
-  /* ========= BINGO LOGIC (ONLY UPDATED WHERE USERNAME → user_id) ========= */
-  const BINGO_SIZE = 5;
-  let bingoData = [];
-  let userBingoState = Array(BINGO_SIZE).fill(null).map(() => Array(BINGO_SIZE).fill(false));
-  let 
-
- BINGO_WIN_BONUS = 20;
-
-  async function getBingoData() {
-    const { data, error } = await supabase.from("bingochallenges").select("*");
-    if (error) throw error;
-    return data;
-  }
-
-  /* UPDATED — fetch by user_id */
-  async function getUserBingoState(userId) {
-    const { data, error } = await supabase
-      .from("user_bingo_state")
-      .select("*")
-      .eq("user_id", userId);
-
-    if (error) throw error;
-
-    const state = Array(BINGO_SIZE).fill(null).map(() => Array(BINGO_SIZE).fill(false));
-
-    if (data) {
-      data.forEach(row => {
-        const r = Math.floor(row.bingo_index / BINGO_SIZE);
-        const c = row.bingo_index % BINGO_SIZE;
-        state[r][c] = row.completed;
-      });
-    }
-
-    return state;
-  }
-
-  function renderBingoBoard(challenges) {
-    const board = document.getElementById("bingoBoard");
-    board.innerHTML = "";
-    bingoData = challenges;
-
-    challenges.forEach((item, index) => {
-      const cell = document.createElement("div");
-      const span = document.createElement("span");
-      span.textContent = item.challenge;
-      cell.appendChild(span);
-      requestAnimationFrame(() => autoFitText(span));
-
-      const row = Math.floor(index / BINGO_SIZE);
-      const col = index % BINGO_SIZE;
-
-      if (userBingoState[row][col]) cell.classList.add("completed");
-
-      cell.addEventListener("click", () => handleBingoClick(index, cell));
-      board.appendChild(cell);
-    });
-  }
-
-  function checkAnyBingo(state) {
-    for (let r = 0; r < BINGO_SIZE; r++)
-      if (state[r].every(v => v)) return true;
-    for (let c = 0; c < BINGO_SIZE; c++)
-      if (state.every(row => row[c])) return true;
-    if (state.every((row, i) => row[i])) return true;
-    if (state.every((row, i) => row[BINGO_SIZE - 1 - i])) return true;
-    return false;
-  }
-
-  async function handleBingoClick(index, cell) {
-    const row = Math.floor(index / BINGO_SIZE);
-    const col = index % BINGO_SIZE;
-    const bonus = bingoData[index].bonus_minutes;
-    const challengeName = bingoData[index].challenge;
-
-    const prevState = JSON.parse(JSON.stringify(userBingoState));
-    const wasCompleted = userBingoState[row][col];
-    const newCompleted = !wasCompleted;
-
-    userBingoState[row][col] = newCompleted;
-    cell.classList.toggle("completed", newCompleted);
-
-    const hadBingoBefore = checkAnyBingo(prevState);
-    const hasBingoAfter = checkAnyBingo(userBingoState);
-
-    try {
-      const { data: existing } = await supabase
-        .from("user_bingo_state")
-        .select("*")
-        .eq("user_id", currentUser.id)
-        .eq("bingo_index", index)
-        .limit(1);
-
-      if (existing && existing.length > 0) {
-        await supabase
-          .from("user_bingo_state")
-          .update({
-            completed: newCompleted,
-            completed_at: newCompleted ? new Date().toISOString() : null
-          })
-          .eq("user_id", currentUser.id)
-          .eq("bingo_index", index);
-      } else {
-        await supabase.from("user_bingo_state").insert([{
-          user_id: currentUser.id,         // UPDATED
-          bingo_index: index,
-          completed: true,
-          completed_at: new Date().toISOString()
-        }]);
-      }
-
-      await logReadingMinutes(
-        currentUser,
-        newCompleted ? bonus : -bonus,
-        `${newCompleted ? "Bingo" : "Unmark Bingo"}: ${challengeName}`
-      );
-
-      if (!hadBingoBefore && hasBingoAfter) {
-        await logReadingMinutes(currentUser, BINGO_WIN_BONUS, "Bingo Board Win");
-      }
-
-      if (hadBingoBefore && !hasBingoAfter) {
-        await logReadingMinutes(currentUser, -BINGO_WIN_BONUS, "Bingo Board Win Reverted");
-      }
-
-    } catch (err) {
-      console.error(err);
-      userBingoState[row][col] = wasCompleted;
-      cell.classList.toggle("completed", wasCompleted);
-      await loadBingo();
-    }
-  }
-
-  async function loadBingo() {
-    try {
-      const data = await getBingoData();
-      if (!data || data.length < 25) {
-        console.warn("Not enough bingo challenges.");
-        return;
-      }
-
-      BINGO_WIN_BONUS = data.find(d => d.type === "win_bonus")?.bonus_minutes || 20;
-
-      userBingoState = await getUserBingoState(currentUser.id);
-      renderBingoBoard(data.slice(0, 25));
-    } catch (err) {
-      console.error("Error loading bingo:", err.message);
-    }
-  }
-
-  /* ========= CONFETTI (unchanged) ========= */
-  const confettiCanvas = document.getElementById("confettiCanvas");
-  const ctx = confettiCanvas.getContext("2d");
-
-  function resizeConfetti() {
-    confettiCanvas.width = window.innerWidth;
-    confettiCanvas.height = window.innerHeight;
-  }
-  resizeConfetti();
-  window.addEventListener("resize", resizeConfetti);
-
-  function launchConfetti() {
-    const confetti = [];
-    const colors = ["#ff8b2e", "#ffd54f", "#1cb8ff", "#ff6f91", "#45e1ff"];
-    const duration = 2500;
-    const endTime = Date.now() + duration;
-
-    for (let i = 0; i < 180; i++) {
-      const side = i % 2 === 0 ? "left" : "right";
-
-      confetti.push({
-        x: side === "left" ? 0 : confettiCanvas.width,
-        y: confettiCanvas.height,
-        w: Math.random() * 8 + 4,
-        h: Math.random() * 12 + 6,
-        c: colors[Math.floor(Math.random() * colors.length)],
-        vx: side === "left" ? (Math.random() * 4 + 2) : -(Math.random() * 4 + 2),
-        vy: -(Math.random() * 6 + 7),
-        gravity: 0.18 + Math.random() * 0.12,
-        rotation: Math.random() * 360,
-        vrot: Math.random() * 10 - 5
-      });
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-
-      confetti.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += p.gravity;
-
-        p.rotation += p.vrot;
-
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate((p.rotation * Math.PI) / 180);
-        ctx.fillStyle = p.c;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      });
-
-      if (Date.now() < endTime) {
-        requestAnimationFrame(animate);
-      } else {
-        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-      }
-    }
-
-    animate();
-  }
-
-  const originalHandleBingoClick = handleBingoClick;
-  handleBingoClick = async function(index, cell) {
-    const prevState = JSON.parse(JSON.stringify(userBingoState));
-    await originalHandleBingoClick(index, cell);
-
-    const hadBingoBefore = checkAnyBingo(prevState);
-    const hasBingoAfter = checkAnyBingo(userBingoState);
-
-    if (!hadBingoBefore && hasBingoAfter) {
-      launchConfetti();
-    }
-  };
-
-  /* ========= EVENT HANDLERS ========= */
-  document.getElementById('profileIcon').addEventListener('click', e => {
-    e.stopPropagation();
-    const dropdown = document.getElementById('profileDropdown');
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-  });
-
-  window.addEventListener("resize", () => {
-    autoFitAllBingoText();
-  });
-
-  window.addEventListener("orientationchange", () => {
-    setTimeout(autoFitAllBingoText, 200);
-  });
-
-  document.addEventListener('click', e => {
-    if (!document.getElementById('profileIcon').contains(e.target))
-      document.getElementById('profileDropdown').style.display = 'none';
-  });
-
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-  });
-
-  document.getElementById('logMinutesBtn').addEventListener('click', async () => {
-    const minutes = parseInt(document.getElementById('minutesInput').value);
-    const title = document.getElementById('bookTitleInput').value.trim();
-    const msg = document.getElementById('logMessage');
-    msg.textContent = '';
-    if (!title) return (msg.textContent = 'Please enter a book title.');
-    if (isNaN(minutes) || minutes < 1 || minutes > 120)
-      return (msg.textContent = 'Enter a valid number of minutes (1–120).');
-
-    try {
-      await logReadingMinutes(currentUser, minutes, title);
-      document.getElementById('minutesInput').value = '';
-      document.getElementById('bookTitleInput').value = '';
-      await loadDashboard();
-    } catch (err) {
-      msg.textContent = 'Error logging minutes: ' + err.message;
-    }
-  });
-
-  document.getElementById('stopwatchBtn').addEventListener('click', async () => {
-    const display = document.getElementById('stopwatchDisplay');
-    const btn = document.getElementById('stopwatchBtn');
-    const msg = document.getElementById('logMessage');
-    msg.textContent = '';
-
-    if (!stopwatchInterval) {
-      startTime = Date.now();
-      btn.textContent = 'Stop Stopwatch';
-      stopwatchInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        display.textContent = '⏱ ' + formatTime(elapsed);
-      }, 1000);
-      return;
-    }
-
-    const title = document.getElementById('bookTitleInput').value.trim();
-    if (!title) return (msg.textContent = 'Please enter the book title before stopping the stopwatch.');
-
-    clearInterval(stopwatchInterval);
-    stopwatchInterval = null;
-    btn.textContent = 'Start Stopwatch';
-
-    const elapsedMinutes = Math.round((Date.now() - startTime) / 60000);
-    if (elapsedMinutes < 1) return (msg.textContent = 'Session too short to log (<1 min).');
-
-    if (confirm(`You read "${title}" for about ${elapsedMinutes} minute(s). Log this time?`)) {
-      await logReadingMinutes(currentUser, elapsedMinutes, title);
-      document.getElementById('bookTitleInput').value = '';
-      await loadDashboard();
-    }
-  });
-
-  window.addEventListener('resize', async () => {
-    const allLogs = await getAllLogs();
-    const total = allLogs.reduce((s, e) => s + e.minutes_logged, 0);
-    renderProgressBar(total);
-  });
-
-  /* ========= INIT ========= */
-  loadDashboard();
-</script>
+  <div id="bingoModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3 id="modalTitle">Challenge</h3>
+      <p id="modalDescription">Description goes here.</p>
+      <div class="modal-actions">
+        <button id="modalCancelBtn" class="btn btn-outline">Cancel</button>
+        <button id="modalConfirmBtn" class="btn btn-primary">I Did It! ✅</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+
+  <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-

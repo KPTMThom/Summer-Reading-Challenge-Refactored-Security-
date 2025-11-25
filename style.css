@@ -1,0 +1,457 @@
+:root {
+  /* New Palette for Yellow Background */
+  --bg-color: #FFF9C4;     /* Creamy Yellow Background */
+  --primary: #0288D1;      /* Bright Blue (buttons/accents) */
+  --primary-dark: #01579B;
+  --accent: #F57C00;       /* Warm Orange (secondary buttons) */
+  --accent-dark: #E65100;
+  
+  --dark: #37474F;         /* Dark Grey Text */
+  --light: #F7FFF7;
+  --white: #FFFFFF;        /* Card backgrounds */
+  --success: #43A047;      /* Green for completed bingo */
+  
+  --radius: 16px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --font-main: 'Fredoka', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+  /* No spots or patterns anymore */
+  color: var(--dark);
+  margin: 0;
+  padding-bottom: 50px;
+}
+
+/* --- Header --- */
+header {
+  background: var(--white);
+  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 3px solid var(--primary);
+}
+
+.header-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* --- Profile --- */
+.profile {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  background-color: var(--accent);
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.profile:hover {
+  transform: scale(1.05);
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 150px;
+  z-index: 10;
+  border: 2px solid #eee;
+}
+
+.dropdown button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: white;
+  text-align: left;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  color: var(--dark);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dropdown button:hover {
+  background-color: #f1f1f1;
+}
+
+/* --- Layout Grid --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 25px auto;
+  padding: 0 15px;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .full-width {
+    grid-column: span 2;
+  }
+}
+
+/* --- Cards --- */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 3px solid #fff; /* slight border for definition against yellow */
+}
+
+.card h3 {
+  margin-top: 0;
+  color: var(--primary-dark);
+  font-size: 1.25rem;
+}
+
+/* --- Streak Box --- */
+.streak-box {
+  background: #FFF3E0; /* Light orange background for streak */
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  text-align: center;
+}
+
+.streak-box h3 { margin: 0 0 5px 0; color: var(--accent-dark); }
+.streak-box p { margin: 0; font-weight: 700; font-size: 1.2rem; }
+.sub-text { font-size: 0.9rem; font-weight: 500 !important; color: #666; margin-top: 4px !important;}
+
+/* --- Progress Bar --- */
+.progress-container {
+  position: relative;
+  height: 30px;
+  background-color: #E0E0E0;
+  border-radius: 25px;
+  margin: 25px 0 10px 0;
+  overflow: hidden; /* Hide overflow for cleaner look */
+  border: 2px solid #BDBDBD;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  width: 0%;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px;
+}
+
+.progress-text {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+/* Milestone markers hidden for cleaner look in this theme version */
+.milestone, .milestone-label { display: none; }
+
+
+/* --- Inputs & Buttons --- */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input {
+  padding: 12px 15px;
+  border: 2px solid #B0BEC5;
+  border-radius: 12px;
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: border-color 0.2s;
+  background: #FAFAFA;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  flex: 1;
+  transition: transform 0.1s, box-shadow 0.1s, background-color 0.2s;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn:active { transform: translateY(2px); }
+
+.btn-primary {
+  background-color: var(--primary);
+  box-shadow: 0 4px 0 var(--primary-dark);
+}
+.btn-primary:hover { background-color: #0277BD; }
+.btn-primary:active { box-shadow: 0 0 0 var(--primary-dark); }
+
+.btn-secondary {
+  background-color: var(--accent);
+  box-shadow: 0 4px 0 var(--accent-dark);
+}
+.btn-secondary:hover { background-color: #EF6C00; }
+.btn-secondary:active { box-shadow: 0 0 0 var(--accent-dark); }
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--dark);
+    color: var(--dark);
+    box-shadow: none;
+}
+.btn-outline:hover { background: #eee;}
+
+
+.error-msg {
+  color: #D32F2F;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: center;
+  min-height: 20px;
+  margin-top: 10px;
+}
+
+/* --- Stopwatch --- */
+.stopwatch-area {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 2px dashed #B0BEC5;
+  text-align: center;
+}
+
+.digital-clock {
+  font-family: 'Courier New', monospace;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--dark);
+  background: #ECEFF1;
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 8px;
+  border: 2px solid #CFD8DC;
+  margin: 0 0 10px 0;
+}
+
+/* --- Leaderboard --- */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderboard-bar {
+  display: flex;
+  align-items: center;
+  background: #F5F5F5;
+  padding: 8px;
+  border-radius: 30px;
+  border: 2px solid #E0E0E0;
+}
+
+.leaderboard-profile {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  z-index: 2;
+  border: 2px solid white;
+}
+
+.leaderboard-label {
+  margin-left: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--dark);
+}
+
+/* --- Big Stats --- */
+.big-number {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  text-align: center;
+  line-height: 1;
+}
+.stat-card p {
+  text-align: center;
+  margin: 5px 0 0 0;
+  font-weight: 700;
+  color: var(--dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- NEW Tidy Bingo Board --- */
+#bingoBoard {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px; /* Slightly bigger gap */
+  width: 100%;
+  margin: 15px auto 0;
+}
+
+#bingoBoard div {
+  aspect-ratio: 1 / 1;
+  position: relative;
+  border: 3px solid #B0BEC5; /* Thicker border */
+  border-radius: 12px;
+  background-color: #ECEFF1;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 3px 0 #B0BEC5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5px;
+}
+
+#bingoBoard div:hover {
+    transform: translateY(-2px);
+    background-color: #fff;
+    border-color: var(--primary);
+}
+
+#bingoBoard div:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+#bingoBoard div.completed {
+  background-color: var(--success);
+  border-color: #2E7D32;
+  color: white;
+  box-shadow: 0 3px 0 #2E7D32;
+}
+
+/* New style for short words */
+#bingoBoard div span {
+  /* No auto-fit logic needed now */
+  font-size: 14px; 
+  font-weight: 700;
+  line-height: 1.1;
+  word-wrap: break-word;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+/* --- Bingo MODAL Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6); /* Dimmed background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.hidden { display: none !important; }
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: var(--radius);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 4px solid var(--primary);
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-content h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-top: 0;
+}
+
+.modal-content p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--dark);
+    margin: 20px 0;
+    font-weight: 500;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+/* Confetti */
+#confettiCanvas {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 9999;
+}
