@@ -1,140 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Login - Library Reading Challenge</title>
+  <title>Logging In...</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 50px auto;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    input, button {
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    #message {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    .link-btn {
-      background: #6c757d;
-      margin-top: 10px;
-    }
-    .link-btn:hover {
-      background: #5a6268;
-    }
-  </style>
 </head>
 <body>
+<h2 id="status">Logging in...</h2>
 
-  <h2>Log In</h2>
+<script>
+// ✔ FIX: use window.supabase
+const supabase = window.supabase.createClient(
+  "https://hfugnpqguidgosxyuioj.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdWducHFndWlkZ29zeHl1aW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NjE3ODAsImV4cCI6MjA3ODAzNzc4MH0.eawP-KaZTXOAE_OSYeJR6Ds_c6aKsqOsXo_EGifgtrU"
+);
 
-  <form id="loginForm">
-    <input type="text" id="user_name" placeholder="Email" required><br> <!-- Use email for login -->
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Log In</button>
-  </form>
+const status = document.getElementById("status");
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
 
-  <button class="link-btn" onclick="window.location.href='signup.html'">Don't have an account? Sign Up</button>
-
-  <div id="message"></div>
-
-  <script>
-const SUPABASE_URL = 'https://hfugnpqguidgosxyuioj.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdWducHFndWlkZ29zeHl1aW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NjE3ODAsImV4cCI6MjA3ODAzNzc4MH0.eawP-KaZTXOAE_OSYeJR6Ds_c6aKsqOsXo_EGifgtrU';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Detect whether input looks like an email
-function isEmail(str) {
-  return /\S+@\S+\.\S+/.test(str);
+// Validate QR code
+if (!code || code.length !== 16) {
+  status.textContent = "Invalid QR code.";
+  throw new Error("Invalid or missing QR code");
 }
 
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const input = document.getElementById('user_name').value.trim(); // email OR username
-  const password = document.getElementById('password').value.trim();
-  const message = document.getElementById('message');
-  message.textContent = "Logging in...";
-
-  let emailToUse = input;
-
-  // 🔵 If user entered a USERNAME → look up its email using Userdetails table
-  if (!isEmail(input)) {
-    const { data: userDetail, error } = await supabase
-      .from('Userdetails')
-      .select('id')       // fetch UUID
-      .eq('user_name', input)
-      .single();
-
-    if (error || !userDetail) {
-      message.textContent = "No account found for that username.";
-      return;
-    }
-
-    const userId = userDetail.id;
-
-    // Now we retrieve Auth user using the UUID
-    const { data: authUser, error: authError } = await supabase.auth.getUser(userId);
-
-    if (!authUser || authError) {
-      message.textContent = "Could not find auth account for this username.";
-      return;
-    }
-
-    // Use their auth email
-    emailToUse = authUser.user.email;
-  }
-
-  // 🟢 Log in using email + password
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: emailToUse,
-    password
-  });
-
-  if (error) {
-    message.textContent = "Login error: " + error.message;
-    return;
-  }
-
-  // Fetch userDetails row for UUID match
-  const { data: userDetails, error: userDetailsError } = await supabase
-    .from('Userdetails')
-    .select('id')
-    .eq('id', data.user.id)
+(async () => {
+  // Look up user by QR code
+  const { data, error } = await supabase
+    .from("Userdetails")
+    .select("UUID, user_name")
+    .eq("UUID", code)
     .single();
 
-  if (userDetailsError) {
-    message.textContent = "Error fetching user details: " + userDetailsError.message;
+  if (error || !data) {
+    status.textContent = "No user found for this QR code.";
     return;
   }
 
   // Store UUID for dashboard
-  sessionStorage.setItem('userId', userDetails.id);
+  sessionStorage.setItem("userId", data.UUID);
 
-  message.textContent = "Login successful! Redirecting...";
-  setTimeout(() => window.location.href = "dashboard.html", 1200);
-});
+  status.textContent = "Login successful! Redirecting...";
+  window.location.href = "dashboard.html";
+})();
 </script>
-
 
 </body>
 </html>
+
 
