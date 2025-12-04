@@ -252,16 +252,67 @@ input:focus { border-color: var(--brand-bright-blue); }
   overflow: hidden; max-width: 100%; pointer-events: none;
 }
 
-/* Leaderboard */
-.leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
-.leaderboard-bar { display: flex; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; border: 1px solid transparent;}
-.leaderboard-bar:hover { border-color: #e2e8f0; background: white; }
-.leaderboard-profile {
-  width: 32px; height: 32px; border-radius: 50%; background: var(--brand-med-blue); color: white;
-  display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 12px; font-weight: 700; flex-shrink: 0;
+/* --- LEADERBOARD --- */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  /* SCROLL LOGIC */
+  max-height: 220px; /* Stops the list from getting too long */
+  overflow-y: auto;  /* Enables vertical scrolling */
+  padding-right: 6px; /* Space for the scrollbar */
 }
-.leaderboard-label { font-size: 0.95rem; font-weight: 600; }
 
+/* Custom "Sleek" Scrollbar (Chrome, Edge, Safari) */
+.leaderboard-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.leaderboard-list::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+.leaderboard-list::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Light grey handle */
+  border-radius: 10px;       /* Rounded ends */
+  border: 2px solid transparent;
+}
+
+.leaderboard-list::-webkit-scrollbar-thumb:hover {
+  background-color: var(--brand-med-blue); /* Turns blue when you grab it */
+}
+
+/* List Item Styling */
+.leaderboard-bar { 
+  display: flex; 
+  align-items: center; 
+  padding: 10px; 
+  background: #f8fafc; 
+  border-radius: 10px; 
+  border: 1px solid transparent;
+  flex-shrink: 0; /* Prevents items from squishing */
+}
+
+.leaderboard-bar:hover { 
+  border-color: #e2e8f0; 
+  background: white; 
+}
+
+.leaderboard-profile {
+  width: 32px; height: 32px; 
+  border-radius: 50%; 
+  background: var(--brand-med-blue); 
+  color: white;
+  display: flex; align-items: center; justify-content: center; 
+  font-size: 12px; margin-right: 12px; font-weight: 700; 
+  flex-shrink: 0;
+}
+
+.leaderboard-label { 
+  font-size: 0.95rem; 
+  font-weight: 600; 
+}
 /* Modal */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 59, 100, 0.5);
