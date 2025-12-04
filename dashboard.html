@@ -7,21 +7,19 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <header>
     <div class="header-content">
       <h1>📚 Reading Challenge</h1>
       <div id="profileIcon" class="profile">
         <span id="profileInitial">U</span>
         <div id="profileDropdown" class="dropdown">
-          <button id="logoutBtn">Logout 🚪</button>
+          <button id="logoutBtn">Logout <span>→</span></button>
         </div>
       </div>
     </div>
@@ -30,44 +28,55 @@
   <main class="dashboard-grid">
     
     <section id="welcomeSection" class="card welcome-card">
-      <h2 id="welcomeMessage">Welcome back!</h2>
+      <div class="card-header">
+        <h2 id="welcomeMessage">Welcome back!</h2>
+      </div>
       <div class="streak-box">
-        <h3>🔥 Streak</h3>
-        <p id="readingStreakDisplay">Loading...</p>
-        <p id="dailyHighScoreDisplay" class="sub-text">Loading...</p>
+        <div class="streak-content">
+          <h3>🔥 Streak</h3>
+          <p id="readingStreakDisplay">0 Days</p>
+        </div>
+        <div class="streak-content">
+           <h3>⭐ Best</h3>
+           <p id="dailyHighScoreDisplay">0 Days</p>
+        </div>
       </div>
     </section>
 
     <section id="communitySection" class="card full-width">
-      <h3>🌍 Community Goal</h3>
+      <div class="card-header-row">
+        <h3>🌍 Community Goal</h3>
+        <span id="progressText" class="progress-badge">Loading...</span>
+      </div>
       <div id="communityProgressBar" class="progress-container">
         <div id="progressFill" class="progress-bar"></div>
       </div>
-      <div id="progressText" class="progress-text">Loading...</div>
     </section>
 
     <section id="logMinutesSection" class="card action-card">
-      <h3>⏱️ Log Your Time</h3>
+      <h3>⏱️ Log Activity</h3>
       <div class="input-group">
-        <input id="bookTitleInput" type="text" placeholder="📖 What book are you reading?" />
+        <input id="bookTitleInput" type="text" placeholder="What are you reading?" />
         <input id="minutesInput" type="number" placeholder="Minutes" min="1" max="120" />
       </div>
       
       <div class="button-group">
-        <button id="logMinutesBtn" class="btn btn-primary">Save Minutes</button>
+        <button id="logMinutesBtn" class="btn btn-primary">Log Session</button>
       </div>
       <p id="logMessage" class="error-msg"></p>
 
       <div class="stopwatch-area">
-        <p id="stopwatchDisplay" class="digital-clock">00:00</p>
-        <button id="stopwatchBtn" class="btn btn-secondary">Start Timer</button>
+        <div class="timer-display">
+          <span id="stopwatchDisplay" class="digital-clock">00:00</span>
+        </div>
+        <button id="stopwatchBtn" class="btn btn-outline-timer">Start Timer</button>
       </div>
     </section>
 
     <section id="userMinutesSection" class="card stat-card">
-      <h3>Your Total</h3>
+      <h3>Total Time</h3>
       <div class="big-number" id="userMinutes">0</div>
-      <p>minutes read</p>
+      <p class="stat-label">Minutes Read</p>
     </section>
 
     <section id="leaderboardSection" class="card leaderboard-card">
@@ -76,8 +85,10 @@
     </section>
 
     <section id="bingoSection" class="card full-width bingo-card">
-      <h3>☀️ Summer Reading Bingo</h3>
-      <p>Tap a square to see the challenge details.</p>
+      <div class="card-header-row">
+        <h3>☀️ Summer Bingo</h3>
+        <span class="sub-label">Tap a square to complete</span>
+      </div>
       <div id="bingoBoard"></div>
     </section>
 
@@ -88,14 +99,13 @@
       <h3 id="modalTitle">Challenge</h3>
       <p id="modalDescription">Description goes here.</p>
       <div class="modal-actions">
-        <button id="modalCancelBtn" class="btn btn-outline">Cancel</button>
-        <button id="modalConfirmBtn" class="btn btn-primary">I Did It! ✅</button>
+        <button id="modalCancelBtn" class="btn btn-text">Cancel</button>
+        <button id="modalConfirmBtn" class="btn btn-primary">Complete ✅</button>
       </div>
     </div>
   </div>
 
   <canvas id="confettiCanvas"></canvas>
-
   <script src="script.js"></script>
 </body>
 </html>
