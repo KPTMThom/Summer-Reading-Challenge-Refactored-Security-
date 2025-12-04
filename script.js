@@ -514,17 +514,6 @@ async function processBingoAction() {
     const dropdown = document.getElementById('profileDropdown');
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
   });
-  
-  // ADDED: Logout functionality
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-     sessionStorage.clear();
-     window.location.href = "login.html";
-  });
-
-  document.addEventListener('click', e => {
-    if (!document.getElementById('profileIcon').contains(e.target))
-      document.getElementById('profileDropdown').style.display = 'none';
-  });
 
   document.getElementById('logMinutesBtn').addEventListener('click', async () => {
     const minutes = parseInt(document.getElementById('minutesInput').value);
