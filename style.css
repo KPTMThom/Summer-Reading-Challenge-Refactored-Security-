@@ -74,23 +74,6 @@ h1 {
 }
 .profile:hover { transform: scale(1.05); }
 
-.dropdown {
-  display: none;
-  position: absolute; top: 55px; right: 0;
-  background: white; border-radius: 12px;
-  box-shadow: var(--shadow-hover);
-  padding: 5px; min-width: 140px; border: 1px solid #eee;
-  z-index: 101;
-}
-
-.dropdown button {
-  background: white; border: none; width: 100%;
-  padding: 12px; text-align: left; font-weight: 600;
-  color: var(--brand-dark-blue); cursor: pointer;
-  border-radius: 8px;
-}
-.dropdown button:hover { background: #f0f4f8; color: var(--brand-bright-blue); }
-
 /* --- DASHBOARD GRID (Tetris Layout) --- */
 .dashboard-grid {
   display: grid;
