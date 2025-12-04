@@ -191,7 +191,7 @@ input:focus { border-color: var(--brand-bright-blue); }
 }
 .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-.stopwatch-area { margin-top: auto; border-top: 1px dashed #e2e8f0; padding-top: 25px; text-align: center;}
+.stopwatch-area { margin-top: 25px; border-top: 1px dashed #e2e8f0; padding-top: 25px; text-align: center;}
 .digital-clock { font-size: 2.2rem; font-weight: 800; color: var(--brand-dark-blue); font-feature-settings: "tnum"; display: block; margin-bottom: 15px;}
 .btn-secondary { background: transparent; border: 2px solid var(--brand-teal); color: var(--brand-teal); }
 .btn-secondary:hover { background: var(--brand-teal); color: white; }
