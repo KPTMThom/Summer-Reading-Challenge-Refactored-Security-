@@ -105,6 +105,7 @@ h1 {
 @media (min-width: 900px) {
   .dashboard-grid {
     grid-template-columns: repeat(4, 1fr);
+    /* Rows adjust automatically based on content */
     grid-template-rows: auto auto auto;
     grid-template-areas:
       "welcome welcome stats log"
@@ -252,10 +253,10 @@ input:focus { border-color: var(--brand-bright-blue); }
   overflow: hidden; max-width: 100%; pointer-events: none;
 }
 
-/* --- LEADERBOARD --- */
+/* --- LEADERBOARD (FIXED) --- */
 .area-leaderboard {
-  /* This caps the height to match the neighbor Bingo card (~380px) */
-  max-height: 380px; 
+  /* Use 100% height to match the Bingo card in the same Grid row */
+  height: 100%; 
   display: flex;
   flex-direction: column;
 }
@@ -265,10 +266,10 @@ input:focus { border-color: var(--brand-bright-blue); }
   flex-direction: column;
   gap: 8px;
   
-  /* THE MAGIC: Fill the remaining space, then scroll */
+  /* Flex 1 pushes the list to fill all available vertical space */
   flex: 1;           
   overflow-y: auto;  
-  min-height: 0;     /* Prevents flexbox overflow bugs */
+  min-height: 0; /* Critical for Flexbox scroll to work properly */
   padding-right: 6px;
 }
 
