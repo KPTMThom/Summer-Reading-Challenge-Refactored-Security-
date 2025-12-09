@@ -596,11 +596,13 @@ document.addEventListener('click', (e) => {
 
 // 3. Fetch data from Supabase
 async function fetchBookSuggestions(query) {
-  // Search the loghistory table for similar titles
+  // Search the loghistory table for titles matching the user's typing
   const { data, error } = await supabase
     .from('loghistory')
     .select('book_title')
-    .ilike('book_title', `%${query}%`) // % matches anything before/after
+    .ilike('book_title', `%${query}%`) // Matches what you type
+    .not('book_title', 'ilike', '%Bingo%') // <--- FIX: Exclude any Bingo system logs
+    .not('book_title', 'ilike', '%Unmark%') // <--- FIX: Exclude "Unmark" actions
     .limit(50);
 
   if (error) {
@@ -613,9 +615,8 @@ async function fetchBookSuggestions(query) {
     return;
   }
 
-  // Remove duplicates (Set) and clean up case
+  // Remove duplicates and clean up
   const titles = data.map(d => d.book_title);
-  // This creates a unique list, case-sensitive
   const uniqueTitles = [...new Set(titles)];
 
   renderSuggestions(uniqueTitles);
