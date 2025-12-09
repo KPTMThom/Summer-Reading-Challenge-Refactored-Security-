@@ -79,9 +79,8 @@ async function logReadingMinutes(user, minutes, bookTitle) {
     // Upsert: Try to insert, ignore if user already has this book
     const { error: shelfError } = await supabase
       .from('user_bookshelf')
-      .upsert(
-        { user_uuid: user.UUID, book_title: bookTitle }, 
-        { onConflict: 'user_uuid, book_title', ignoreDuplicates: true } 
+      .insert(
+        { user_uuid: user.UUID, book_title: bookTitle } 
       );
       
     if (shelfError) console.error("Bookshelf error:", shelfError);
