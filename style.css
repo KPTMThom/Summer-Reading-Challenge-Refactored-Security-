@@ -350,29 +350,47 @@ input:focus { border-color: var(--brand-bright-blue); }
 }
 
 /* ========= BOOKSHELF & RATINGS ========= */
+
+/* 1. New Card Styles (White Backgrounds) */
+.accent-purple {
+  background: white;
+  border-top: 4px solid #ab47bc; /* Purple top border */
+  color: #333;
+}
+
+.accent-pink {
+  background: white;
+  border-top: 4px solid #ec407a; /* Pink top border */
+  color: #333;
+}
+
+/* 2. Scrollable List Container */
 .scrollable-list {
   max-height: 250px;
   overflow-y: auto;
   margin-top: 10px;
+  padding-right: 5px; /* Space for scrollbar */
 }
 
+/* 3. Individual Book Rows (Grey bubbles) */
 .book-row {
-  background: rgba(255, 255, 255, 0.5);
+  background: #f4f6f8; /* Light grey instead of transparent */
   margin-bottom: 8px;
   padding: 10px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 5px;
+  border: 1px solid #eee;
 }
 
 .book-title {
   font-weight: 600;
   font-size: 0.95rem;
-  color: #333;
+  color: #222;
 }
 
-/* Star Rating System */
+/* 4. Star Rating System */
 .star-rating {
   display: flex;
   gap: 4px;
@@ -381,7 +399,7 @@ input:focus { border-color: var(--brand-bright-blue); }
 .star {
   cursor: pointer;
   font-size: 1.2rem;
-  color: #ccc; /* Grey for unrated */
+  color: #ddd; /* Light grey for unrated */
   transition: color 0.2s, transform 0.1s;
 }
 
@@ -390,21 +408,34 @@ input:focus { border-color: var(--brand-bright-blue); }
 }
 
 .star:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
-/* Specific Card Accents */
-.accent-purple { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); }
-.accent-pink { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); }
-
+/* 5. Top Rated List Styles */
 .top-book-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
 }
+
+.top-book-row:last-child {
+  border-bottom: none;
+}
+
 .top-book-score {
-  font-weight: 800;
-  color: #d32f2f;
+  font-weight: 700;
+  color: #d81b60; /* Pinkish red text */
+  background: #fce4ec; /* Light pink bubble */
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
 }
