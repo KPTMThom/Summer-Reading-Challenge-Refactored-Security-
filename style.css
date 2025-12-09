@@ -348,3 +348,63 @@ input:focus { border-color: var(--brand-bright-blue); }
   background-color: #e6f7ff; /* Light blue highlight on hover */
   color: #000;
 }
+
+/* ========= BOOKSHELF & RATINGS ========= */
+.scrollable-list {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.book-row {
+  background: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.book-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Star Rating System */
+.star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #ccc; /* Grey for unrated */
+  transition: color 0.2s, transform 0.1s;
+}
+
+.star.filled {
+  color: #ffc107; /* Gold */
+}
+
+.star:hover {
+  transform: scale(1.2);
+}
+
+/* Specific Card Accents */
+.accent-purple { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); }
+.accent-pink { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%); }
+
+.top-book-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.top-book-score {
+  font-weight: 800;
+  color: #d32f2f;
+}
