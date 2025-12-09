@@ -218,10 +218,20 @@ function renderLeaderboard(users) {
 function renderProgressBar(total) {
   const fill = document.getElementById('progressFill');
   const text = document.getElementById('progressText');
-  const percent = Math.min((total / COMMUNITY_GOAL) * 100, 100);
+
+  const goal = COMMUNITY_GOAL; // 1,000,000 minutes
+
+  const percent = Math.min((total / goal) * 100, 100);
   fill.style.width = `${percent}%`;
-  const percentText = ((total / COMMUNITY_GOAL) * 100).toFixed(1);
-  text.textContent = `${percentText}% of Goal`;
+
+  const percentText = ((total / goal) * 100).toFixed(1);
+
+  // Format numbers with commas
+  const formattedTotal = total.toLocaleString();
+  const formattedGoal = goal.toLocaleString();
+
+  // Set combined output text
+  text.textContent = `${percentText}% of Goal (${formattedTotal} / ${formattedGoal} minutes)`;
 }
 
 /* ========= READING STREAK ========= */
