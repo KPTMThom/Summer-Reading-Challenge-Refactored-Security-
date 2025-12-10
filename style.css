@@ -501,9 +501,20 @@ input:focus { border-color: var(--brand-bright-blue); }
   border-radius: 8px;
   font-size: 1rem;
   text-align: center;
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding doesn't widen the element */
 }
 
 #usernameModal input:focus {
   border-color: var(--accent-blue);
   outline: none;
+}
+
+/* New: Specifically centers the button in this modal */
+#usernameModal .modal-actions {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
 }
