@@ -64,11 +64,15 @@
       <div class="big-number" id="userMinutes">0</div>
       <p class="stat-label" data-i18n="totalMinutes">Total Minutes Logged</p>
     </section>
-
-    <section id="logMinutesSection" class="card area-log accent-orange">
+    
+<section id="logMinutesSection" class="card area-log accent-orange">
       <div class="card-header">
         <h3 data-i18n="logTime">⏱️ Log Time</h3>
       </div>
+      
+      <p style="font-size: 0.8rem; margin-top: -5px; margin-bottom: 15px; opacity: 0.8;">
+        (Maximum reading session is 2 hours)
+      </p>
       
       <div class="input-group">
         <div class="autocomplete-wrapper">
@@ -77,8 +81,14 @@
         </div>
         <input id="minutesInput" type="number" placeholder="Mins" data-i18n-placeholder="minsPlaceholder" min="1" max="120" />
       </div>
+      
       <button id="logMinutesBtn" class="btn btn-primary" data-i18n="saveSession">Save Session</button>
       <p id="logMessage" class="error-msg"></p>
+
+      <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1); text-align: center;">
+        <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">Or time your read here</p>
+      </div>
+
       <div class="stopwatch-area">
         <span id="stopwatchDisplay" class="digital-clock">00:00</span>
         <button id="stopwatchBtn" class="btn btn-secondary" data-i18n="startTimer">Start Timer</button>
@@ -173,6 +183,7 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
