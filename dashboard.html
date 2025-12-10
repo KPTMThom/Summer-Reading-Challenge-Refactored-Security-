@@ -146,6 +146,23 @@
     </div>
   </div>
 
+  <div id="usernameModal" class="modal-overlay hidden" style="z-index: 9999;">
+  <div class="modal-content">
+    <h3>Welcome! 👋</h3>
+    <p>Please choose a unique display name to join the challenge.</p>
+    <p class="tiny-note" style="margin-bottom: 15px;">(Please do not use real names)</p>
+    
+    <div class="input-group" style="flex-direction: column; gap: 10px;">
+      <input id="newUsernameInput" type="text" placeholder="e.g. BookWorm99" style="width: 100%;" />
+      <p id="usernameErrorMsg" class="error-msg" style="text-align: center; height: 1.2em;"></p>
+    </div>
+
+    <div class="modal-actions" style="justify-content: center; margin-top: 15px;">
+      <button id="saveUsernameBtn" class="btn btn-primary">Start Reading 🚀</button>
+    </div>
+  </div>
+</div>
+
   <button id="langToggle" class="floating-lang-toggle">
     <span class="lang-opt active" data-lang="en">ENG</span>
     <span class="divider">/</span>
@@ -156,4 +173,5 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
