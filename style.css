@@ -440,23 +440,24 @@ input:focus { border-color: var(--brand-bright-blue); }
   padding: 20px 0;
 }
 
-/* ========= FLOATING LANGUAGE TOGGLE ========= */
+/* ========= FLOATING LANGUAGE TOGGLE (FIXED) ========= */
 .floating-lang-toggle {
-  position: fixed;
-  bottom: 25px;
-  right: 25px;
-  z-index: 990; /* High enough to float over cards, lower than modals */
+  position: fixed !important; /* Force fixed positioning */
+  bottom: 30px !important;    /* Force 30px from bottom */
+  right: 30px !important;     /* Force 30px from right */
+  top: auto !important;       /* Explicitly turn off 'top' positioning */
+  z-index: 9999 !important;   /* Ensure it sits on top of everything */
   
   background: white;
   border: 1px solid #e0e0e0;
-  border-radius: 50px; /* Pill shape */
+  border-radius: 50px;
   padding: 12px 20px;
   
   display: flex;
   align-items: center;
   gap: 8px;
   
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Soft shadow */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   cursor: pointer;
   
   font-family: 'Inter', sans-serif;
@@ -468,8 +469,8 @@ input:focus { border-color: var(--brand-bright-blue); }
 }
 
 .floating-lang-toggle:hover {
-  transform: translateY(-3px); /* Moves up slightly on hover */
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
 .floating-lang-toggle .divider {
@@ -477,7 +478,6 @@ input:focus { border-color: var(--brand-bright-blue); }
   font-weight: 300;
 }
 
-/* Active State (Controlled by JS) */
 .lang-opt {
   transition: color 0.3s;
 }
@@ -486,5 +486,5 @@ input:focus { border-color: var(--brand-bright-blue); }
   color: #000;
   text-decoration: underline;
   text-decoration-thickness: 2px;
-  text-decoration-color: #ffd54f; /* Matches your accent colors */
+  text-decoration-color: #ffd54f;
 }
