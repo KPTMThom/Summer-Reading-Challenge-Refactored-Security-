@@ -439,27 +439,3 @@ input:focus { border-color: var(--brand-bright-blue); }
   text-align: center;
   padding: 20px 0;
 }
-
-/* ========= NOTIFICATION MODAL ========= */
-.notification-modal-content {
-  text-align: left; /* Reading mode */
-  max-width: 500px;
-}
-
-.notification-modal-content h2, 
-.notification-modal-content h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.notification-modal-content img {
-  max-width: 100%;
-  border-radius: 8px;
-  margin: 10px 0;
-}
-
-.notification-modal-content p {
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 10px;
-}
