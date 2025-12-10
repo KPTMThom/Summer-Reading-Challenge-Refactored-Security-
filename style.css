@@ -439,3 +439,34 @@ input:focus { border-color: var(--brand-bright-blue); }
   text-align: center;
   padding: 20px 0;
 }
+
+/* ========= LANGUAGE TOGGLE ========= */
+.btn-lang {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #555;
+  margin-right: 10px;
+}
+
+.btn-lang .lang-opt {
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.btn-lang .lang-opt.active {
+  opacity: 1;
+  color: #000;
+  text-decoration: underline;
+}
+
+.btn-lang:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
