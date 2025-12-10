@@ -18,14 +18,14 @@ let cachedLeaderboard = [];
 const translations = {
   en: {
     appTitle: "☀️ Summer Reading Challenge",
-    subtitle: "Let's read some books.",
+    subtitle: "Welcome to the Summer Reading Challenge.", // UPDATED
     daysFire: "Days Streak",
-    totalMinutes: "Total Minutes",
+    totalMinutes: "Total Minutes Logged", // UPDATED
     logTime: "⏱️ Log Time",
     saveSession: "Save Session",
     startTimer: "Start Timer",
     stopTimer: "Stop Timer",
-    communityGoal: "🌍 Community Goal",
+    communityGoal: "🌍 Help Us Read 1 Million Minutes Across Kāpiti This Summer", // UPDATED
     bingoHeader: "🏖️ Bingo",
     topReaders: "🏆 Top Readers",
     myBookshelf: "📚 My Bookshelf",
@@ -47,14 +47,14 @@ const translations = {
   },
   mi: {
     appTitle: "☀️ Wero Pānui Pukapuka",
-    subtitle: "Kia pānui pukapuka tātou.",
+    subtitle: "Nau mai ki te Wero Pānui Pukapuka o te Raumati.", // UPDATED
     daysFire: "Rā Ahi",
-    totalMinutes: "Tapeke Meneti",
+    totalMinutes: "Tapeke Meneti Kua Tuhia", // UPDATED
     logTime: "⏱️ Tuhia te Wā",
     saveSession: "Tiaki",
     startTimer: "Tīmata",
     stopTimer: "Whakamutu",
-    communityGoal: "🌍 Whāinga ā-Hapori",
+    communityGoal: "🌍 Āwhinatia mātou ki te pānui i te 1 miriona meneti i Kāpiti.", // UPDATED
     bingoHeader: "🏖️ Bingo",
     topReaders: "🏆 Kaipānui Toa",
     myBookshelf: "📚 Taku Whata Pukapuka",
