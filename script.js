@@ -9,7 +9,7 @@ let stopwatchInterval = null;
 let startTime = null;
 const STREAK_INTERVAL_SECONDS = 24 * 60 * 60;
 
-// NEW: Variables to store data so we can re-translate immediately
+// Caching for instant language switching
 let cachedUserMinutes = 0;
 let cachedCommunityTotal = 0;
 let cachedLeaderboard = [];
@@ -42,7 +42,8 @@ const translations = {
     hour: "hour", hours: "hours",
     min: "min", mins: "mins",
     logConfirm: "Log",
-    forBook: "minutes for"
+    forBook: "minutes for",
+    alertTitle: "Please enter a book title."
   },
   mi: {
     appTitle: "☀️ Wero Pānui Pukapuka",
@@ -70,7 +71,8 @@ const translations = {
     hour: "hāora", hours: "ngā hāora",
     min: "meneti", mins: "ngā meneti",
     logConfirm: "Tuhia",
-    forBook: "meneti mō"
+    forBook: "meneti mō",
+    alertTitle: "Tuhia te taitara pukapuka."
   }
 };
 
@@ -95,17 +97,16 @@ function updatePageLanguage() {
   document.querySelectorAll('.lang-opt').forEach(span => {
     span.classList.toggle('active', span.getAttribute('data-lang') === currentLang);
   });
-  
-  // 4. Dynamic Elements & Re-Rendering (This fixes the issue!)
+  // 4. Dynamic Elements
   if (currentUser) renderWelcome(currentUser);
-  
   const stopwatchBtn = document.getElementById('stopwatchBtn');
   if (stopwatchBtn) stopwatchBtn.textContent = stopwatchInterval ? t('stopTimer') : t('startTimer');
 
-  // Re-run render functions with cached data to apply new language
+  // 5. Re-render Stats & BINGO with new language
   renderUserMinutes(cachedUserMinutes); 
   renderProgressBar(cachedCommunityTotal);
   renderLeaderboard(cachedLeaderboard);
+  loadBingo(); // Reloads board (En vs Mao)
 }
 
 /* ========= UTILS ========= */
@@ -208,24 +209,24 @@ async function loadDashboard() {
     if (!currentUser) return window.location.href = "login.html";
     await ensureUsername();
     
-    // Load Data and Cache it
+    // Load Data & Cache
     const userLogs = await getUserLogsById(currentUser.UUID);
-    cachedUserMinutes = userLogs.reduce((s, e) => s + e.minutes_logged, 0); // Cache
+    cachedUserMinutes = userLogs.reduce((s, e) => s + e.minutes_logged, 0);
     await supabase.from("Userdetails").update({ minutes_logged: cachedUserMinutes }).eq("UUID", currentUser.UUID);
 
-    cachedLeaderboard = await getAllUsers(); // Cache
+    cachedLeaderboard = await getAllUsers();
     
     const allLogs = await getAllLogs();
-    cachedCommunityTotal = allLogs.reduce((s, e) => s + e.minutes_logged, 0); // Cache
+    cachedCommunityTotal = allLogs.reduce((s, e) => s + e.minutes_logged, 0);
 
     // Initial Render
-    updatePageLanguage(); // This handles rendering the text using the cached data
+    updatePageLanguage();
     
     // Modules
-    await loadBingo();
     await loadReadingStreak();
     await loadBookshelf();
     await loadTopRated();
+    // loadBingo is called inside updatePageLanguage()
 
   } catch(e) { console.error("Dashboard Load Error:", e); }
 }
@@ -245,7 +246,6 @@ function renderUserMinutes(totalMinutes) {
   const days = Math.floor(totalMinutes / (60 * 24));
 
   let result = [];
-  // Uses t() so it will switch language automatically
   if (days > 0) result.push(`${days} ${days !== 1 ? t('days') : t('day')}`);
   if (hours > 0) result.push(`${hours} ${hours !== 1 ? t('hours') : t('hour')}`);
   if (minutes > 0 || result.length === 0)
@@ -264,7 +264,6 @@ function renderLeaderboard(users) {
     const initial = displayName[0].toUpperCase();
     const bar = document.createElement('div');
     bar.classList.add('leaderboard-bar');
-    // Updated to use t('min')
     bar.innerHTML = `<div class="leaderboard-profile">${initial}</div><div class="leaderboard-label">${displayName}: ${user.minutes_logged} ${t('min')}</div>`;
     container.appendChild(bar);
   });
@@ -365,25 +364,57 @@ let BINGO_WIN_BONUS = 20;
 let currentBingoIndex = null;
 
 function getShortBingoTitle(description) {
+  // If Māori, just return the first word
+  if (currentLang === 'mi') {
+    return description.split(" ")[0];
+  }
+
+  // English Logic
   const text = description.toLowerCase();
   if (text.includes("minutes")) return "Read 20 Mins";
+  if (text.includes("comic")) return "Comic Book";
+  if (text.includes("friend")) return "Read to Friend";
+  if (text.includes("outside")) return "Read Outside";
+  if (text.includes("bed")) return "Read in Bed";
   const words = description.split(" ");
   return words.slice(0, 2).join(" ");
 }
 
 async function loadBingo() {
   try {
-    const { data } = await supabase.from("bingochallenges").select("*");
+    // 1. Fetch ALL rows (English + Māori) sorted by ID
+    const { data } = await supabase
+      .from("bingochallenges")
+      .select("*")
+      .order('id', { ascending: true }); 
+
     if (!data || data.length < 25) return;
+
+    // 2. Slice based on Language
+    // English = 0-24, Māori = 25-49
+    let displayData = [];
+    if (currentLang === 'mi' && data.length >= 50) {
+      displayData = data.slice(25, 50); 
+    } else {
+      displayData = data.slice(0, 25);
+    }
+    bingoData = displayData;
+
+    // 3. User Progress
     BINGO_WIN_BONUS = data.find(d => d.type === "win_bonus")?.bonus_minutes || 20;
-    
     const { data: userState } = await supabase.from("user_bingo_state").select("*").eq("UUID", currentUser.UUID);
-    userBingoState = Array(BINGO_SIZE).fill(null).map(() => Array(BINGO_SIZE).fill(false));
-    if (userState) userState.forEach(row => { userBingoState[Math.floor(row.bingo_index / BINGO_SIZE)][row.bingo_index % BINGO_SIZE] = row.completed; });
     
+    userBingoState = Array(BINGO_SIZE).fill(null).map(() => Array(BINGO_SIZE).fill(false));
+    if (userState) userState.forEach(row => { 
+        const r = Math.floor(row.bingo_index / BINGO_SIZE);
+        const c = row.bingo_index % BINGO_SIZE;
+        userBingoState[r][c] = row.completed; 
+    });
+    
+    // 4. Render
     const board = document.getElementById("bingoBoard");
     board.innerHTML = "";
-    bingoData = data.slice(0, 25);
+    
     bingoData.forEach((item, index) => {
       const cell = document.createElement("div");
       cell.id = `bingo-cell-${index}`;
@@ -553,7 +584,7 @@ document.getElementById('stopwatchBtn').addEventListener('click', async () => {
   }
 });
 
-// Language Toggle Handler
+// Language Toggle Handler (Floating Button)
 const langToggle = document.getElementById('langToggle');
 if(langToggle) {
     langToggle.addEventListener('click', () => {
