@@ -655,27 +655,59 @@ document.getElementById('logMinutesBtn').addEventListener('click', async () => {
   }
 });
 
+/* ========= STOPWATCH HANDLER (Updated) ========= */
 document.getElementById('stopwatchBtn').addEventListener('click', async () => {
   const display = document.getElementById('stopwatchDisplay');
   const btn = document.getElementById('stopwatchBtn');
   const msg = document.getElementById('logMessage');
-  msg.textContent = '';
+  const titleInput = document.getElementById('bookTitleInput'); // Get the input element
+  
+  msg.textContent = ''; // Clear previous errors
 
+  // 1. If Timer is NOT running (User wants to START)
   if (!stopwatchInterval) {
+    
+    // --- VALIDATION CHECK ---
+    const title = titleInput.value.trim();
+    if (!title) {
+      msg.textContent = t('alertTitle') || 'Please enter a book title first.';
+      titleInput.focus(); // Jump cursor to the box
+      // Add a red shake effect to the input (optional but nice)
+      titleInput.style.borderColor = '#ef4444'; 
+      setTimeout(() => titleInput.style.borderColor = '', 2000);
+      return; // STOP HERE - Do not start timer
+    }
+    // ------------------------
+
     startTime = Date.now();
     btn.textContent = t('stopTimer');
-    stopwatchInterval = setInterval(() => display.textContent = formatTime(Date.now() - startTime), 1000);
+    // Change button style to indicate active state (optional)
+    btn.classList.add('btn-active-timer'); 
+    
+    stopwatchInterval = setInterval(() => {
+      display.textContent = formatTime(Date.now() - startTime);
+    }, 1000);
+
+  // 2. If Timer IS running (User wants to STOP)
   } else {
     clearInterval(stopwatchInterval);
     stopwatchInterval = null;
     btn.textContent = t('startTimer');
+    btn.classList.remove('btn-active-timer');
+
     const elapsedMinutes = Math.round((Date.now() - startTime) / 60000);
-    const title = document.getElementById('bookTitleInput').value.trim();
-    if (elapsedMinutes >= 1 && title) {
+    const title = titleInput.value.trim(); // Get title again just in case they changed it
+
+    // Only log if at least 1 minute has passed
+    if (elapsedMinutes >= 1) {
         if(confirm(`${t('logConfirm')} ${elapsedMinutes} ${t('forBook')} "${title}"?`)) {
             await logReadingMinutes(currentUser, elapsedMinutes, title);
-            document.getElementById('bookTitleInput').value = '';
+            titleInput.value = ''; // Clear input only after successful log
+            display.textContent = "00:00"; // Reset display
         }
+    } else {
+        msg.textContent = "Session too short to log (under 1 min).";
+        display.textContent = "00:00";
     }
   }
 });
