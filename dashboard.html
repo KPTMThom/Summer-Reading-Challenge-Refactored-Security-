@@ -95,15 +95,27 @@
       </div>
     </section>
 
-    <section id="communitySection" class="card area-community accent-teal">
-      <div class="community-header">
-        <h3 data-i18n="communityGoal">Let's read our way to one million minutes together!</h3>
-        <span id="progressText" style="font-weight:700; font-size:0.9rem;">Loading...</span>
-      </div>
-      <div id="communityProgressBar" class="progress-container">
-        <div id="progressFill" class="progress-bar"></div>
-      </div>
-    </section>
+    <div class="card area-community accent-teal">
+  <h3 data-i18n="communityGoal">Let's read our way to one million minutes together!</h3>
+  
+  <div class="community-stats-row">
+    
+    <div class="com-stat-group">
+      <span class="com-stat-value" id="communityTotalDisplay">0</span>
+      <span class="com-stat-label" data-i18n="totalMinutes">Total Minutes Logged</span>
+    </div>
+
+    <div class="com-stat-group right-align">
+      <span class="com-stat-value highlight-teal" id="communityPercentDisplay">0%</span>
+      <span class="com-stat-label" data-i18n="goalText">of Goal</span>
+    </div>
+    
+  </div>
+
+  <div class="progress-container">
+    <div id="progressFill" class="progress-bar"></div>
+  </div>
+</div>
 
     <section id="bingoSection" class="card area-bingo accent-olive">
       <div class="card-header-row">
@@ -182,6 +194,7 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
