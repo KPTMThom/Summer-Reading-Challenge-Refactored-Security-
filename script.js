@@ -18,9 +18,9 @@ let cachedLeaderboard = [];
 const translations = {
   en: {
     appTitle: "Summer Reading Challenge",
-    subtitle: "Welcome to the Summer Reading Challenge.", // UPDATED
+    subtitle: "Welcome to the Summer Reading Challenge.",
     daysFire: "Days Streak",
-    totalMinutes: "Total Minutes Logged", // UPDATED
+    totalMinutes: "Total Minutes Logged",
     logTime: "⏱️ Log Time",
     saveSession: "Save Session",
     startTimer: "Start Timer",
@@ -47,14 +47,14 @@ const translations = {
   },
   mi: {
     appTitle: "Wero Pānui Pukapuka",
-    subtitle: "Nau mai ki te Wero Pānui Pukapuka o te Raumati.", // UPDATED
+    subtitle: "Nau mai ki te Wero Pānui Pukapuka o te Raumati.",
     daysFire: "Rā Ahi",
-    totalMinutes: "Tapeke Meneti Kua Tuhia", // UPDATED
+    totalMinutes: "Tapeke Meneti Kua Tuhia",
     logTime: "⏱️ Tuhia te Wā",
     saveSession: "Tiaki",
     startTimer: "Tīmata",
     stopTimer: "Whakamutu",
-    communityGoal: "🌍 Āwhinatia mātou ki te pānui i te 1 miriona meneti i Kāpiti.", // UPDATED
+    communityGoal: "🌍 Āwhinatia mātou ki te pānui i te 1 miriona meneti i Kāpiti.",
     bingoHeader: "🏖️ Bingo",
     topReaders: "🏆 Kaipānui Toa",
     myBookshelf: "📚 Taku Whata Pukapuka",
@@ -106,7 +106,7 @@ function updatePageLanguage() {
   renderUserMinutes(cachedUserMinutes); 
   renderProgressBar(cachedCommunityTotal);
   renderLeaderboard(cachedLeaderboard);
-  loadBingo(); // Reloads board (En vs Mao)
+  loadBingo(); 
 }
 
 /* ========= UTILS ========= */
@@ -127,6 +127,16 @@ function toNZDateString(dateInput) {
   return `${year}-${month}-${day}`;
 }
 
+function escapeHtml(text) {
+  if (!text) return "";
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 /* ========= SUPABASE DATA HELPERS ========= */
 async function getUserDataById(uuid) {
   const { data, error } = await supabase.from('Userdetails').select('*').eq('UUID', uuid).single();
@@ -141,7 +151,7 @@ async function getUserLogsById(userId) {
 }
 
 async function getAllUsers() {
-  const { data, error } = await supabase.from('Userdetails').select('user_name, minutes_logged');
+  const { data, error } = await supabase.from('Userdetails').select('user_name, total_minutes, UUID'); // Updated to select total_minutes
   if (error) throw error;
   return data;
 }
@@ -267,7 +277,8 @@ async function loadDashboard() {
     // Load Data & Cache
     const userLogs = await getUserLogsById(currentUser.UUID);
     cachedUserMinutes = userLogs.reduce((s, e) => s + e.minutes_logged, 0);
-    await supabase.from("Userdetails").update({ minutes_logged: cachedUserMinutes }).eq("UUID", currentUser.UUID);
+    // Sync total minutes for leaderboard accuracy
+    await supabase.from("Userdetails").update({ total_minutes: cachedUserMinutes }).eq("UUID", currentUser.UUID);
 
     cachedLeaderboard = await getAllUsers();
     
@@ -281,7 +292,6 @@ async function loadDashboard() {
     await loadReadingStreak();
     await loadBookshelf();
     await loadTopRated();
-    // loadBingo is called inside updatePageLanguage()
 
   } catch(e) { console.error("Dashboard Load Error:", e); }
 }
@@ -309,19 +319,64 @@ function renderUserMinutes(totalMinutes) {
   el.textContent = result.join(', ');
 }
 
+// UPDATED LEADERBOARD LOGIC
 function renderLeaderboard(users) {
-  const container = document.getElementById('leaderboardContainer');
-  container.innerHTML = '';
-  if (!users.length) return (container.textContent = 'No data available.');
+  const container = document.getElementById("leaderboardContainer");
+  if (!container) return;
+  container.innerHTML = "";
 
-  users.sort((a, b) => b.minutes_logged - a.minutes_logged).slice(0, 10).forEach(user => {
-    const displayName = user.user_name ?? "User";
-    const initial = displayName[0].toUpperCase();
-    const bar = document.createElement('div');
-    bar.classList.add('leaderboard-bar');
-    bar.innerHTML = `<div class="leaderboard-profile">${initial}</div><div class="leaderboard-label">${displayName}: ${user.minutes_logged} ${t('min')}</div>`;
-    container.appendChild(bar);
+  if (!users || users.length === 0) {
+    container.innerHTML = "<p class='empty-state'>No reading logged yet!</p>";
+    return;
+  }
+
+  // Use total_minutes if available, else minutes_logged fallback
+  const sortedUsers = users.sort((a, b) => (b.total_minutes || b.minutes_logged || 0) - (a.total_minutes || a.minutes_logged || 0));
+
+  // 1. Find Current User's Rank
+  const myIndex = sortedUsers.findIndex(u => u.UUID === currentUser.UUID);
+  
+  // 2. Slice for Top 8
+  const top8 = sortedUsers.slice(0, 8);
+
+  // 3. Render Top 8
+  top8.forEach((u, index) => {
+    const isMe = (u.UUID === currentUser.UUID);
+    const mins = u.total_minutes || u.minutes_logged || 0;
+    const row = document.createElement("div");
+    row.className = `leaderboard-item ${isMe ? "is-me" : ""}`;
+    row.innerHTML = `
+      <span>
+        <span style="opacity:0.7; margin-right:8px; font-variant-numeric: tabular-nums;">#${index + 1}</span> 
+        ${escapeHtml(u.user_name)}
+      </span>
+      <span>${mins}m</span>
+    `;
+    container.appendChild(row);
   });
+
+  // 4. If User is NOT in Top 8, show them at the bottom
+  if (myIndex >= 8) {
+    // Add visual divider
+    const divider = document.createElement("div");
+    divider.className = "rank-divider";
+    divider.innerHTML = "•••"; 
+    container.appendChild(divider);
+
+    // Add User Row
+    const myData = sortedUsers[myIndex];
+    const myMins = myData.total_minutes || myData.minutes_logged || 0;
+    const myRow = document.createElement("div");
+    myRow.className = "leaderboard-item user-rank-row"; // Special class
+    myRow.innerHTML = `
+      <span>
+        <span style="opacity:0.7; margin-right:8px; font-variant-numeric: tabular-nums;">#${myIndex + 1}</span> 
+        ${escapeHtml(myData.user_name)} (You)
+      </span>
+      <span>${myMins}m</span>
+    `;
+    container.appendChild(myRow);
+  }
 }
 
 function renderProgressBar(total) {
@@ -419,12 +474,9 @@ let BINGO_WIN_BONUS = 20;
 let currentBingoIndex = null;
 
 function getShortBingoTitle(description) {
-  // If Māori, just return the first word
   if (currentLang === 'mi') {
     return description.split(" ")[0];
   }
-
-  // English Logic
   const text = description.toLowerCase();
   if (text.includes("minutes")) return "Read 20 Mins";
   if (text.includes("comic")) return "Comic Book";
@@ -437,7 +489,6 @@ function getShortBingoTitle(description) {
 
 async function loadBingo() {
   try {
-    // 1. Fetch ALL rows (English + Māori) sorted by ID
     const { data } = await supabase
       .from("bingochallenges")
       .select("*")
@@ -445,8 +496,6 @@ async function loadBingo() {
 
     if (!data || data.length < 25) return;
 
-    // 2. Slice based on Language
-    // English = 0-24, Māori = 25-49
     let displayData = [];
     if (currentLang === 'mi' && data.length >= 50) {
       displayData = data.slice(25, 50); 
@@ -455,7 +504,6 @@ async function loadBingo() {
     }
     bingoData = displayData;
 
-    // 3. User Progress
     BINGO_WIN_BONUS = data.find(d => d.type === "win_bonus")?.bonus_minutes || 20;
     const { data: userState } = await supabase.from("user_bingo_state").select("*").eq("UUID", currentUser.UUID);
     
@@ -466,7 +514,6 @@ async function loadBingo() {
         userBingoState[r][c] = row.completed; 
     });
     
-    // 4. Render
     const board = document.getElementById("bingoBoard");
     board.innerHTML = "";
     
@@ -639,7 +686,7 @@ document.getElementById('stopwatchBtn').addEventListener('click', async () => {
   }
 });
 
-// Language Toggle Handler (Floating Button)
+// Language Toggle Handler
 const langToggle = document.getElementById('langToggle');
 if(langToggle) {
     langToggle.addEventListener('click', () => {
