@@ -591,3 +591,44 @@ input:focus { border-color: var(--brand-bright-blue); }
   width: 100%;
   margin-top: 15px;
 }
+
+/* --- COMMUNITY CARD UPDATES --- */
+
+.community-stats-row {
+  display: flex;
+  justify-content: space-between; /* Push items to far left and right */
+  align-items: flex-end;          /* Align bottom so text lines up */
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.com-stat-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.com-stat-group.right-align {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.com-stat-value {
+  font-size: 2.2rem; /* Big, impactful number */
+  font-weight: 800;
+  color: var(--brand-dark-blue);
+  line-height: 1;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.com-stat-value.highlight-teal {
+  color: var(--brand-teal); /* Highlight the percentage */
+}
+
+.com-stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
