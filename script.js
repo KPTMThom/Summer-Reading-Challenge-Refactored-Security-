@@ -1,7 +1,7 @@
 /* ========= CONFIG ========= */
 const SUPABASE_URL = 'https://hfugnpqguidgosxyuioj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdWducHFndWlkZ29zeHl1aW9qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0NjE3ODAsImV4cCI6MjA3ODAzNzc4MH0.eawP-KaZTXOAE_OSYeJR6Ds_c6aKsqOsXo_EGifgtrU';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const COMMUNITY_GOAL = 1_000_000;
 
 let currentUser = null;
@@ -129,20 +129,20 @@ function toNZDateString(dateInput) {
 
 /* ========= SUPABASE DATA HELPERS ========= */
 async function getUserDataById(uuid) {
-  const { data, error } = await supabase.from('Userdetails').select('*').eq('UUID', uuid).single();
+  const { data, error } = await supabaseClient.from('Userdetails').select('*').eq('UUID', uuid).single();
   if (error) throw error;
   return data;
 }
 
 async function getUserLogsById(userId) {
-  const { data, error } = await supabase.from('loghistory').select('minutes_logged, time_logged').eq('UUID', userId).order("time_logged", { ascending: false });
+  const { data, error } = await supabaseClient.from('loghistory').select('minutes_logged, time_logged').eq('UUID', userId).order("time_logged", { ascending: false });
   if (error) throw error;
   return data;
 }
 
 async function getAllUsers() {
   // Added 'UUID' to the select query
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('Userdetails')
     .select('user_name, minutes_logged, UUID'); 
   if (error) throw error;
@@ -150,7 +150,7 @@ async function getAllUsers() {
 }
 
 async function getAllLogs() {
-  const { data, error } = await supabase.from('loghistory').select('minutes_logged');
+  const { data, error } = await supabaseClient.from('loghistory').select('minutes_logged');
   if (error) throw error;
   return data;
 }
@@ -158,7 +158,7 @@ async function getAllLogs() {
 /* --- LOGGING FUNCTION --- */
 async function logReadingMinutes(user, minutes, bookTitle) {
   // 1. Log to history
-  const { error: logError } = await supabase.from('loghistory').insert([{
+  const { error: logError } = await supabaseClient.from('loghistory').insert([{
     UUID: user.UUID,
     minutes_logged: minutes,
     book_title: bookTitle,
@@ -170,7 +170,7 @@ async function logReadingMinutes(user, minutes, bookTitle) {
   // 2. Add to Bookshelf
   const lowerTitle = bookTitle.toLowerCase();
   if (!lowerTitle.includes('bingo') && !lowerTitle.includes('unmark')) {
-    const { error: shelfError } = await supabase.from('user_bookshelf').upsert(
+    const { error: shelfError } = await supabaseClient.from('user_bookshelf').upsert(
         { user_uuid: user.UUID, book_title: bookTitle }, 
         { onConflict: 'user_uuid, book_title', ignoreDuplicates: true } 
     );
@@ -217,7 +217,7 @@ function ensureUsername() {
       btn.disabled = true;
 
       try {
-        const { data: existingUsers } = await supabase
+        const { data: existingUsers } = await supabaseClient
           .from("Userdetails")
           .select("user_name")
           .ilike("user_name", newName);
@@ -230,7 +230,7 @@ function ensureUsername() {
         }
 
         // Success: Update Database
-        await supabase
+        await supabaseClient
           .from("Userdetails")
           .update({ user_name: newName })
           .eq("UUID", currentUser.UUID);
@@ -270,7 +270,7 @@ async function loadDashboard() {
     // Load Data & Cache
     const userLogs = await getUserLogsById(currentUser.UUID);
     cachedUserMinutes = userLogs.reduce((s, e) => s + e.minutes_logged, 0);
-    await supabase.from("Userdetails").update({ minutes_logged: cachedUserMinutes }).eq("UUID", currentUser.UUID);
+    await supabaseClient.from("Userdetails").update({ minutes_logged: cachedUserMinutes }).eq("UUID", currentUser.UUID);
 
     cachedLeaderboard = await getAllUsers();
     
@@ -401,7 +401,7 @@ async function loadReadingStreak() {
   
   if (days[0] !== todayStr && days[0] !== yesterdayStr) {
     streakEl.textContent = "0";
-    await supabase.from("Userdetails").update({ reading_streak: 0 }).eq("UUID", currentUser.UUID);
+    await supabaseClient.from("Userdetails").update({ reading_streak: 0 }).eq("UUID", currentUser.UUID);
     return;
   }
   
@@ -411,7 +411,7 @@ async function loadReadingStreak() {
     if ((toDate(days[i - 1]) - toDate(days[i])) / 864e5 === 1) streak++; else break;
   }
   streakEl.textContent = `${streak}`;
-  await supabase.from("Userdetails").update({ reading_streak: streak }).eq("UUID", currentUser.UUID);
+  await supabaseClient.from("Userdetails").update({ reading_streak: streak }).eq("UUID", currentUser.UUID);
 }
 
 /* ========= BOOKSHELF & RATINGS ========= */
@@ -419,7 +419,7 @@ async function loadBookshelf() {
   const list = document.getElementById('bookshelfList');
   if(!currentUser || !list) return;
 
-  const { data: books, error } = await supabase.from('user_bookshelf').select('*').eq('user_uuid', currentUser.UUID).order('created_at', { ascending: false });
+  const { data: books, error } = await supabaseClient.from('user_bookshelf').select('*').eq('user_uuid', currentUser.UUID).order('created_at', { ascending: false });
   if (error) return;
 
   list.innerHTML = '';
@@ -439,14 +439,14 @@ async function loadBookshelf() {
 }
 
 window.rateBook = async function(bookId, rating) {
-  const { error } = await supabase.from('user_bookshelf').update({ rating: rating }).eq('id', bookId);
+  const { error } = await supabaseClient.from('user_bookshelf').update({ rating: rating }).eq('id', bookId);
   if (!error) { loadBookshelf(); loadTopRated(); }
 };
 
 async function loadTopRated() {
   const container = document.getElementById('topRatedList');
   if (!container) return;
-  const { data, error } = await supabase.from('user_bookshelf').select('book_title, rating').not('rating', 'is', null);
+  const { data, error } = await supabaseClient.from('user_bookshelf').select('book_title, rating').not('rating', 'is', null);
   if (error || !data || !data.length) { container.innerHTML = '<p class="tiny-note">No rated books yet.</p>'; return; }
 
   const groups = {};
@@ -489,7 +489,7 @@ function getShortBingoTitle(description) {
 async function loadBingo() {
   try {
     // 1. Fetch ALL rows (English + Māori) sorted by ID
-    const { data } = await supabase
+    const { data } = await supabaseClient
       .from("bingochallenges")
       .select("*")
       .order('id', { ascending: true }); 
@@ -508,7 +508,7 @@ async function loadBingo() {
 
     // 3. User Progress
     BINGO_WIN_BONUS = data.find(d => d.type === "win_bonus")?.bonus_minutes || 20;
-    const { data: userState } = await supabase.from("user_bingo_state").select("*").eq("UUID", currentUser.UUID);
+    const { data: userState } = await supabaseClient.from("user_bingo_state").select("*").eq("UUID", currentUser.UUID);
     
     userBingoState = Array(BINGO_SIZE).fill(null).map(() => Array(BINGO_SIZE).fill(false));
     if (userState) userState.forEach(row => { 
@@ -570,11 +570,11 @@ async function processBingoAction() {
   if (newCompleted && checkAnyBingo(userBingoState)) launchConfetti();
 
   try {
-     const { data: existing } = await supabase.from("user_bingo_state").select("*").eq("UUID", currentUser.UUID).eq("bingo_index", index).limit(1);
+     const { data: existing } = await supabaseClient.from("user_bingo_state").select("*").eq("UUID", currentUser.UUID).eq("bingo_index", index).limit(1);
      if(existing.length) {
-       await supabase.from("user_bingo_state").update({ completed: newCompleted }).eq("UUID", currentUser.UUID).eq("bingo_index", index);
+       await supabaseClient.from("user_bingo_state").update({ completed: newCompleted }).eq("UUID", currentUser.UUID).eq("bingo_index", index);
      } else {
-       await supabase.from("user_bingo_state").insert([{ UUID: currentUser.UUID, bingo_index: index, completed: true }]);
+       await supabaseClient.from("user_bingo_state").insert([{ UUID: currentUser.UUID, bingo_index: index, completed: true }]);
      }
      await logReadingMinutes(currentUser, newCompleted ? bonus : -bonus, `${newCompleted ? "Bingo" : "Unmark"}: ${bingoData[index].challenge}`);
   } catch(e) { console.error(e); }
@@ -605,7 +605,7 @@ document.addEventListener('click', (e) => {
 });
 
 async function fetchBookSuggestions(query) {
-  const { data } = await supabase.from('loghistory').select('book_title')
+  const { data } = await supabaseClient.from('loghistory').select('book_title')
     .ilike('book_title', `%${query}%`)
     .not('book_title', 'ilike', '%Bingo%')
     .not('book_title', 'ilike', '%Unmark%')
